@@ -1,39 +1,35 @@
 name: Python CI
 
-# 1. Триггер на push и 2. Возможность ручного запуска
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+    types: [ opened, synchronize ]
   workflow_dispatch:
 
 jobs:
   build-and-test:
-    # 3. Выбор операционной системы
     runs-on: ubuntu-latest
 
     steps:
-      # 5. Клонирование проекта
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 4. Установка ПО (Python 3.10+, как указано в README)
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
 
-      # 6. Скачивание зависимостей
       - name: Download dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 7. Сборка проекта (компиляция байт-кода Python / проверка синтаксиса)
       - name: Create a project build
         run: python -m compileall .
 
-      # 8. Запуск модульных тестов (инициализация БД + проверка или запуск pytest/unittest)
       - name: Run unit tests
         run: |
           python db.py -a -p
